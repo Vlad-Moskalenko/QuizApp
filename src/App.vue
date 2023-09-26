@@ -1,10 +1,16 @@
 <script>
-import HomeView from './pages/HomeView.vue';
-import QuizView from './pages/QuizView.vue';
+import { RouterView } from 'vue-router';
 </script>
+
 <template>
-  <div>
-    <QuizView />
+  <div class="container">
+    <RouterView />
   </div>
 </template>
-<style scoped></style>
+
+<style scoped>
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+</style>
