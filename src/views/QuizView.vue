@@ -1,19 +1,50 @@
 <script setup>
-import { useRoute, useRouter, RouterView } from 'vue-router';
-import q from '../data/quizes.json';
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+import quizes from '../data/quizes.json';
+
+import QuizHeader from '../components/QuizHeader.vue';
+import QuizQuestion from '../components/QuizQuestion.vue';
+import QuizResult from '../components/QuizResult.vue';
 
 const route = useRoute();
-const router = useRouter();
 
 const quizId = parseInt(route.params.id);
-const quiz = q.find(quiz => quiz.id === quizId);
+const quiz = quizes.find(quiz => quiz.id == parseInt(quizId));
+
+const currentQuestionIndex = ref(0);
+const numberOfCorrectAnswers = ref(0);
+const showResults = ref(false);
+
+const questionStatus = computed(() => `${currentQuestionIndex.value} / ${quiz.questions.length}`);
+const barPercentage = computed(
+  () => `${(currentQuestionIndex.value / quiz.questions.length) * 100}%`
+);
+
+const selectedOption = isCorrect => {
+  if (isCorrect) {
+    numberOfCorrectAnswers.value += 1;
+  }
+
+  if (currentQuestionIndex.value === quiz.questions.length - 1) {
+    showResults.value = true;
+  }
+
+  currentQuestionIndex.value++;
+};
 </script>
 
 <template>
-  <div v-if="quiz">
-    <h1>Quiz {{ quiz.questions.length }}</h1>
-    <RouterView />
-    <button @click="router.push(`/quiz/${quizId}/question`)">Start</button>
-  </div>
-  <div v-else>Quiz not found</div>
+  <QuizHeader :question-status="questionStatus" :bar-percentage="barPercentage" />
+  <QuizQuestion
+    v-if="!showResults"
+    :question="quiz.questions[currentQuestionIndex]"
+    @selected-option="selectedOption"
+  />
+  <QuizResult
+    v-else
+    :number-of-correct-answers="numberOfCorrectAnswers"
+    :quiz-questions-length="quiz.questions.length"
+  />
 </template>

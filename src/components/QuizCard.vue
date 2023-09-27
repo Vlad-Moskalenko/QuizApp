@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 const { quiz } = defineProps({
-  quiz: Array,
+  quiz: Object,
 });
 
 const router = useRouter();
