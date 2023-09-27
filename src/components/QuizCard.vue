@@ -12,13 +12,13 @@ const navigateToQuiz = () => {
 </script>
 
 <template>
-  <div @click="navigateToQuiz" class="card">
+  <li @click="navigateToQuiz" class="card">
     <img :src="quiz.img" :alt="quiz.name" />
     <div class="card-text">
       <h2>{{ quiz.name }}</h2>
       <p>{{ quiz.questions.length }} questions</p>
     </div>
-  </div>
+  </li>
 </template>
 
 <style scoped>

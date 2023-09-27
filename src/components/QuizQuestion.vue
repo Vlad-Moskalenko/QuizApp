@@ -1,9 +1,25 @@
 <script setup>
+import gsap from 'gsap';
+
 const emit = defineEmits(['selectedOption']);
 
 defineProps({
   question: Object,
 });
+
+const beforeEnter = el => {
+  el.style.opacity = 0;
+  el.style.transform = 'translateX(-100px)';
+};
+
+const enter = el => {
+  gsap.to(el, {
+    x: 0,
+    opacity: 1,
+    duration: 0.2,
+    delay: el.dataset.index * 0.2,
+  });
+};
 </script>
 
 <template>
@@ -12,17 +28,20 @@ defineProps({
       <h1 class="question">{{ question.text }}</h1>
     </div>
     <ul class="options">
-      <li
-        @click="emit('selectedOption', option.isCorrect)"
-        v-for="option in question.options"
-        :key="option.id"
-        class="option"
-      >
-        <p class="option-label">{{ option.label }}</p>
-        <div class="option-value">
-          <p>{{ option.text }}</p>
-        </div>
-      </li>
+      <TransitionGroup name="question" appear @before-enter="beforeEnter" @enter="enter">
+        <li
+          @click="emit('selectedOption', option.isCorrect)"
+          v-for="(option, index) in question.options"
+          :key="option.id"
+          :data-index="index"
+          class="option"
+        >
+          <p class="option-label">{{ option.label }}</p>
+          <div class="option-value">
+            <p>{{ option.text }}</p>
+          </div>
+        </li>
+      </TransitionGroup>
     </ul>
   </div>
 </template>

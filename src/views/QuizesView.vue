@@ -1,5 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
+import gsap from 'gsap';
+
 import q from '../data/quizes.json';
 import QuizCard from '../components/QuizCard.vue';
 
@@ -9,15 +11,33 @@ const search = ref('');
 watch(search, () => {
   quizes.value = q.filter(quiz => quiz.name.toLowerCase().includes(search.value.toLowerCase()));
 });
+
+const beforeEnter = el => {
+  el.style.opacity = 0;
+  el.style.transform = 'translateY(-60px)';
+};
+
+const enter = el => {
+  gsap.to(el, {
+    y: 0,
+    opacity: 1,
+    duration: 0.3,
+    delay: el.dataset.index * 0.3,
+  });
+};
 </script>
 
 <template>
-  <header>
-    <h1>Quizes</h1>
-    <input v-model.trim="search" type="text" placeholder="Search..." />
-  </header>
-  <div class="options-container">
-    <QuizCard v-for="quiz in quizes" :key="quiz.id" :quiz="quiz" />
+  <div>
+    <header>
+      <h1>Quizes</h1>
+      <input v-model.trim="search" type="text" placeholder="Search..." />
+    </header>
+    <ul class="options">
+      <TransitionGroup appear @before-enter="beforeEnter" @enter="enter">
+        <QuizCard v-for="(quiz, index) in quizes" :key="quiz.id" :quiz="quiz" :data-index="index" />
+      </TransitionGroup>
+    </ul>
   </div>
 </template>
 
@@ -41,7 +61,8 @@ header input {
   border-radius: 5px;
 }
 
-.options-container {
+.options {
+  padding-left: 0;
   display: flex;
   flex-wrap: wrap;
   margin-top: 40px;

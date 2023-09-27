@@ -36,15 +36,36 @@ const selectedOption = isCorrect => {
 </script>
 
 <template>
-  <QuizHeader :question-status="questionStatus" :bar-percentage="barPercentage" />
-  <QuizQuestion
-    v-if="!showResults"
-    :question="quiz.questions[currentQuestionIndex]"
-    @selected-option="selectedOption"
-  />
-  <QuizResult
-    v-else
-    :number-of-correct-answers="numberOfCorrectAnswers"
-    :quiz-questions-length="quiz.questions.length"
-  />
+  <div>
+    <QuizHeader :question-status="questionStatus" :bar-percentage="barPercentage" />
+    <Transition name="fade">
+      <QuizQuestion
+        v-if="!showResults"
+        :question="quiz.questions[currentQuestionIndex]"
+        @selected-option="selectedOption"
+      />
+      <QuizResult
+        v-else
+        :number-of-correct-answers="numberOfCorrectAnswers"
+        :quiz-questions-length="quiz.questions.length"
+      />
+    </Transition>
+  </div>
 </template>
+
+<style scoped>
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave {
+  opacity: 1;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease;
+}
+</style>
